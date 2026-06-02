@@ -85,20 +85,20 @@ class AuthService {
   /// Prompts the user with a biometric (fingerprint/face) dialog.
   /// Returns true on success, false if cancelled or failed.
   Future<bool> authenticateWithBiometric() async {
-    try {
-      final authenticated = await _localAuth.authenticate(
-        localizedReason: 'Confirma tu identidad para acceder a FinVe',
-        options: const AuthenticationOptions(
-          biometricOnly: false,
-          stickyAuth: true,
-          useErrorDialogs: true,
-        ),
-      );
-      return authenticated;
-    } on PlatformException {
-      return false;
-    }
+  try {
+    final authenticated = await _localAuth.authenticate(
+      localizedReason: 'Confirma tu identidad para acceder a FinVe',
+      options: const AuthenticationOptions(
+        biometricOnly: false,
+        stickyAuth: true,
+        useErrorDialogs: true,
+      ),
+    );
+    return authenticated;
+  } on PlatformException {
+    return false;
   }
+}
 
   // ─────────────────────────────────────────────
   //  Combined auth flow
