@@ -8,7 +8,9 @@ import '../../core/models/wallet.dart';
 import '../../core/utils/constants.dart';
 import '../../core/utils/extensions.dart';
 import '../../core/utils/formatters.dart';
+import '../../core/providers/rate_provider.dart';
 import '../../shared/theme/app_text_styles.dart';
+import '../../shared/widgets/save_button.dart';
 import '../wallets/wallets_provider.dart';
 import 'transactions_provider.dart';
 
@@ -45,12 +47,11 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen>
   Category? _selectedCategory;
   PaymentMethod _paymentMethod = PaymentMethod.cash;
   late DateTime _date;
-  bool _saving = false;
   bool _isDirty = false;
   List<Category> _categories = [];
 
   @override
-  bool get hasUnsavedChanges => _isDirty && !_saving;
+  bool get hasUnsavedChanges => _isDirty;
 
   bool get _isEditing => widget.transaction != null;
 
@@ -101,15 +102,22 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen>
   }
 
   Future<void> _save() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) throw Exception('validation');
     if (_selectedWallet == null) {
       context.showSnackBar('Selecciona una billetera', isError: true);
-      return;
+      throw Exception('no_wallet');
     }
 
-    setState(() => _saving = true);
     try {
       final amount = double.parse(_amountCtrl.text.replaceAll(',', '.'));
+
+      // Capturar la tasa BCV del momento solo para transacciones en VES.
+      // Esto permite calcular el valor histórico en USD aunque la tasa cambie.
+      final rates = ref.read(currencyRatesProvider);
+      final rateSnapshot = _selectedWallet!.currencyCode == CurrencyCodes.ves
+          ? (rates.bcvRate > 0 ? rates.bcvRate : null)
+          : null;
+
       final tx = app_models.Transaction(
         id: widget.transaction?.id,
         walletId: _selectedWallet!.id!,
@@ -120,6 +128,7 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen>
         note: _noteCtrl.text.trim().isEmpty ? null : _noteCtrl.text.trim(),
         date: _date,
         createdAt: widget.transaction?.createdAt ?? DateTime.now(),
+        rateSnapshot: rateSnapshot,
       );
 
       if (_isEditing) {
@@ -132,11 +141,8 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen>
 
       if (mounted) Navigator.of(context).pop(true);
     } catch (e) {
-      if (mounted) {
-        context.showSnackBar('Error al guardar: $e', isError: true);
-      }
-    } finally {
-      if (mounted) setState(() => _saving = false);
+      if (mounted) context.showSnackBar('Error al guardar: $e', isError: true);
+      rethrow;
     }
   }
 
@@ -172,23 +178,6 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen>
       child: Scaffold(
         appBar: AppBar(
           title: Text(_isEditing ? 'Editar movimiento' : 'Nuevo movimiento'),
-          actions: [
-            if (_saving)
-              const Padding(
-                padding: EdgeInsets.all(16),
-                child: SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2)),
-              )
-            else
-              TextButton(
-                onPressed: _save,
-                child: Text('Guardar',
-                    style: AppTextStyles.labelLarge
-                        .copyWith(color: colorScheme.primary)),
-              ),
-          ],
         ),
         body: Form(
           key: _formKey,
@@ -441,20 +430,14 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen>
               const SizedBox(height: 24),
 
               // ── Save button ────────────────────
-              FilledButton(
-                onPressed: _saving ? null : _save,
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size.fromHeight(52),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
-                  backgroundColor: _type == TransactionType.income
-                      ? const Color(0xFF1D9E75)
-                      : colorScheme.error,
-                ),
-                child: Text(
-                  _isEditing ? 'Actualizar movimiento' : 'Registrar movimiento',
-                  style: AppTextStyles.labelLarge,
-                ),
+              SaveButton(
+                label: _isEditing
+                    ? 'Actualizar movimiento'
+                    : 'Registrar movimiento',
+                onSave: _save,
+                color: _type == TransactionType.income
+                    ? const Color(0xFF1D9E75)
+                    : colorScheme.error,
               ),
 
               const SizedBox(height: 32),

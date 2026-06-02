@@ -27,12 +27,13 @@ class TransactionListItem extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final tx = transaction;
     final isIncome = tx.isIncome;
-    final amountColor =
-        isIncome ? const Color(0xFF1D9E75) : colorScheme.error;
+    final amountColor = isIncome ? const Color(0xFF1D9E75) : colorScheme.error;
     final sign = isIncome ? '+' : '−';
 
     final usdEquiv = walletCurrency != CurrencyCodes.usd
-        ? rates.toUsd(tx.amount, walletCurrency)
+        ? (tx.rateSnapshot != null && tx.rateSnapshot! > 0
+            ? tx.amount / tx.rateSnapshot! // valor histórico real
+            : rates.toUsd(tx.amount, walletCurrency)) // fallback tiempo real
         : null;
 
     return InkWell(
@@ -79,20 +80,19 @@ class TransactionListItem extends StatelessWidget {
                       const SizedBox(width: 6),
                       Text(
                         Formatters.transactionDate(tx.date),
-                        style: AppTextStyles.caption.copyWith(
-                            color: colorScheme.onSurfaceVariant),
+                        style: AppTextStyles.caption
+                            .copyWith(color: colorScheme.onSurfaceVariant),
                       ),
                       if (tx.wallet != null) ...[
                         const SizedBox(width: 6),
                         const Text('·',
-                            style: TextStyle(
-                                color: Colors.grey, fontSize: 10)),
+                            style: TextStyle(color: Colors.grey, fontSize: 10)),
                         const SizedBox(width: 6),
                         Flexible(
                           child: Text(
                             tx.wallet!.name,
-                            style: AppTextStyles.caption.copyWith(
-                                color: colorScheme.onSurfaceVariant),
+                            style: AppTextStyles.caption
+                                .copyWith(color: colorScheme.onSurfaceVariant),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -104,8 +104,8 @@ class TransactionListItem extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 2),
                       child: Text(
                         tx.note!,
-                        style: AppTextStyles.caption.copyWith(
-                            color: colorScheme.onSurfaceVariant),
+                        style: AppTextStyles.caption
+                            .copyWith(color: colorScheme.onSurfaceVariant),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -123,14 +123,15 @@ class TransactionListItem extends StatelessWidget {
               children: [
                 Text(
                   '$sign${Formatters.byCurrency(tx.amount, walletCurrency)}',
-                  style:
-                      AppTextStyles.amountSmall.copyWith(color: amountColor),
+                  style: AppTextStyles.amountSmall.copyWith(color: amountColor),
                 ),
                 if (usdEquiv != null)
                   Text(
-                    '≈ ${Formatters.usd(usdEquiv)}',
-                    style: AppTextStyles.caption.copyWith(
-                        color: colorScheme.onSurfaceVariant),
+                    tx.rateSnapshot != null
+                        ? '≈ ${Formatters.usd(usdEquiv)} hist.'
+                        : '≈ ${Formatters.usd(usdEquiv)}',
+                    style: AppTextStyles.caption
+                        .copyWith(color: colorScheme.onSurfaceVariant),
                   ),
               ],
             ),

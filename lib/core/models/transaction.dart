@@ -13,6 +13,7 @@ class Transaction {
     this.note,
     required this.date,
     required this.createdAt,
+    this.rateSnapshot,
     // Joined fields (not stored in DB directly)
     this.category,
     this.wallet,
@@ -27,6 +28,10 @@ class Transaction {
   final String? note;
   final DateTime date;
   final DateTime createdAt;
+
+  /// Tasa BCV (VES/USD) al momento de registrar la transacción.
+  /// Solo se guarda cuando la billetera es VES. Null para otras monedas.
+  final double? rateSnapshot;
 
   // Optional joined objects (populated by DAO when needed)
   final Category? category;
@@ -51,6 +56,7 @@ class Transaction {
       note: map['note'] as String?,
       date: DateTime.parse(map['date'] as String),
       createdAt: DateTime.parse(map['created_at'] as String),
+      rateSnapshot: (map['rate_snapshot'] as num?)?.toDouble(),
       category: category,
       wallet: wallet,
     );
@@ -67,6 +73,7 @@ class Transaction {
       'note': note,
       'date': date.toIso8601String(),
       'created_at': createdAt.toIso8601String(),
+      'rate_snapshot': rateSnapshot,
     };
   }
 
@@ -83,6 +90,7 @@ class Transaction {
     String? note,
     DateTime? date,
     DateTime? createdAt,
+    double? rateSnapshot,
     Category? category,
     Wallet? wallet,
   }) {
@@ -96,6 +104,7 @@ class Transaction {
       note: note ?? this.note,
       date: date ?? this.date,
       createdAt: createdAt ?? this.createdAt,
+      rateSnapshot: rateSnapshot ?? this.rateSnapshot,
       category: category ?? this.category,
       wallet: wallet ?? this.wallet,
     );

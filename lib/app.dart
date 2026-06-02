@@ -63,10 +63,13 @@ class _AuthGateState extends State<_AuthGate> {
   }
 
   Future<void> _check() async {
-    final pinSet = await AuthService.instance.isPinSet();
+    final results = await Future.wait([
+      AuthService.instance.isPinSet(),
+      Future.delayed(const Duration(milliseconds: 1500)),
+    ]);
     if (mounted) {
       setState(() {
-        _pinSet = pinSet;
+        _pinSet = results[0] as bool;
         _loading = false;
       });
     }

@@ -10,7 +10,7 @@ class DatabaseHelper {
   static Database? _db;
 
   // Bump this number whenever the schema changes and add a migration block.
-  static const int _kVersion = 2;
+  static const int _kVersion = 3;
   static const String _kDbName = 'finve.db';
 
   // ─────────────────────────────────────────────
@@ -70,6 +70,13 @@ class DatabaseHelper {
       await db.execute(_sqlCreateBudgets);
       debugPrint('[DB] Migration v2: budgets table created');
     }
+    if (oldVersion < 3) {
+      await db.execute(
+        'ALTER TABLE transactions ADD COLUMN rate_snapshot REAL',
+      );
+      debugPrint(
+          '[DB] Migration v3: rate_snapshot column added to transactions');
+    }
   }
 
   // ─────────────────────────────────────────────
@@ -108,7 +115,8 @@ class DatabaseHelper {
                                ('cash','pago_movil','transfer','zelle','other')),
       note           TEXT,
       date           TEXT    NOT NULL,
-      created_at     TEXT    NOT NULL
+      created_at     TEXT    NOT NULL,
+      rate_snapshot  REAL
     )
   ''';
 
@@ -173,21 +181,51 @@ class DatabaseHelper {
   Future<void> _seedCategories(DatabaseExecutor txn) async {
     const categories = [
       // Expense categories
-      {'name': 'Comida',         'icon': '🍔', 'color': '#FF6B35', 'type': 'expense'},
-      {'name': 'Transporte',     'icon': '🚗', 'color': '#4ECDC4', 'type': 'expense'},
-      {'name': 'Servicios',      'icon': '💡', 'color': '#FFE66D', 'type': 'expense'},
-      {'name': 'Salud',          'icon': '💊', 'color': '#FF6B9D', 'type': 'expense'},
-      {'name': 'Entretenimiento','icon': '🎮', 'color': '#C3A6FF', 'type': 'expense'},
-      {'name': 'Hogar',          'icon': '🏠', 'color': '#A8E6CF', 'type': 'expense'},
-      {'name': 'Ropa',           'icon': '👕', 'color': '#FFB347', 'type': 'expense'},
-      {'name': 'Educación',      'icon': '📚', 'color': '#87CEEB', 'type': 'expense'},
-      {'name': 'Otros gastos',   'icon': '📦', 'color': '#B0BEC5', 'type': 'expense'},
+      {'name': 'Comida', 'icon': '🍔', 'color': '#FF6B35', 'type': 'expense'},
+      {
+        'name': 'Transporte',
+        'icon': '🚗',
+        'color': '#4ECDC4',
+        'type': 'expense'
+      },
+      {
+        'name': 'Servicios',
+        'icon': '💡',
+        'color': '#FFE66D',
+        'type': 'expense'
+      },
+      {'name': 'Salud', 'icon': '💊', 'color': '#FF6B9D', 'type': 'expense'},
+      {
+        'name': 'Entretenimiento',
+        'icon': '🎮',
+        'color': '#C3A6FF',
+        'type': 'expense'
+      },
+      {'name': 'Hogar', 'icon': '🏠', 'color': '#A8E6CF', 'type': 'expense'},
+      {'name': 'Ropa', 'icon': '👕', 'color': '#FFB347', 'type': 'expense'},
+      {
+        'name': 'Educación',
+        'icon': '📚',
+        'color': '#87CEEB',
+        'type': 'expense'
+      },
+      {
+        'name': 'Otros gastos',
+        'icon': '📦',
+        'color': '#B0BEC5',
+        'type': 'expense'
+      },
       // Income categories
-      {'name': 'Trabajo',        'icon': '💼', 'color': '#1D9E75', 'type': 'income'},
-      {'name': 'Freelance',      'icon': '💻', 'color': '#378ADD', 'type': 'income'},
-      {'name': 'Inversión',      'icon': '📈', 'color': '#EF9F27', 'type': 'income'},
-      {'name': 'Regalo',         'icon': '🎁', 'color': '#FF85A1', 'type': 'income'},
-      {'name': 'Otros ingresos', 'icon': '💰', 'color': '#5DCAA5', 'type': 'income'},
+      {'name': 'Trabajo', 'icon': '💼', 'color': '#1D9E75', 'type': 'income'},
+      {'name': 'Freelance', 'icon': '💻', 'color': '#378ADD', 'type': 'income'},
+      {'name': 'Inversión', 'icon': '📈', 'color': '#EF9F27', 'type': 'income'},
+      {'name': 'Regalo', 'icon': '🎁', 'color': '#FF85A1', 'type': 'income'},
+      {
+        'name': 'Otros ingresos',
+        'icon': '💰',
+        'color': '#5DCAA5',
+        'type': 'income'
+      },
     ];
 
     for (final cat in categories) {

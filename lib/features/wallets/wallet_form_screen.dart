@@ -5,6 +5,7 @@ import '../../core/models/wallet.dart';
 import '../../core/utils/constants.dart';
 import '../../core/utils/extensions.dart';
 import '../../shared/theme/app_text_styles.dart';
+import '../../shared/widgets/save_button.dart';
 import 'wallets_provider.dart';
 
 // Available wallet icons
@@ -39,11 +40,10 @@ class _WalletFormScreenState extends ConsumerState<WalletFormScreen>
   late TextEditingController _balanceCtrl;
   late String _selectedCurrency;
   late String _selectedIcon;
-  bool _saving = false;
   bool _isDirty = false;
 
   @override
-  bool get hasUnsavedChanges => _isDirty && !_saving;
+  bool get hasUnsavedChanges => _isDirty;
 
   bool get _isEditing => widget.wallet != null;
 
@@ -66,8 +66,9 @@ class _WalletFormScreenState extends ConsumerState<WalletFormScreen>
   }
 
   Future<void> _save() async {
-    if (!_formKey.currentState!.validate()) return;
-    setState(() => _saving = true);
+    if (!_formKey.currentState!.validate()) {
+      throw Exception('validation');
+    }
 
     try {
       final balance =
@@ -94,11 +95,8 @@ class _WalletFormScreenState extends ConsumerState<WalletFormScreen>
 
       if (mounted) Navigator.of(context).pop(true);
     } catch (e) {
-      if (mounted) {
-        context.showSnackBar('Error al guardar: $e', isError: true);
-      }
-    } finally {
-      if (mounted) setState(() => _saving = false);
+      if (mounted) context.showSnackBar('Error al guardar: $e', isError: true);
+      rethrow;
     }
   }
 
@@ -116,26 +114,6 @@ class _WalletFormScreenState extends ConsumerState<WalletFormScreen>
       child: Scaffold(
         appBar: AppBar(
           title: Text(_isEditing ? 'Editar billetera' : 'Nueva billetera'),
-          actions: [
-            if (_saving)
-              const Padding(
-                padding: EdgeInsets.all(16),
-                child: SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-              )
-            else
-              TextButton(
-                onPressed: _save,
-                child: Text(
-                  'Guardar',
-                  style: AppTextStyles.labelLarge
-                      .copyWith(color: colorScheme.primary),
-                ),
-              ),
-          ],
         ),
         body: Form(
           key: _formKey,
@@ -279,17 +257,9 @@ class _WalletFormScreenState extends ConsumerState<WalletFormScreen>
               const SizedBox(height: 32),
 
               // ── Save button ────────────────────
-              FilledButton(
-                onPressed: _saving ? null : _save,
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size.fromHeight(52),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
-                ),
-                child: Text(
-                  _isEditing ? 'Actualizar billetera' : 'Crear billetera',
-                  style: AppTextStyles.labelLarge,
-                ),
+              SaveButton(
+                label: _isEditing ? 'Actualizar billetera' : 'Crear billetera',
+                onSave: _save,
               ),
             ],
           ),
