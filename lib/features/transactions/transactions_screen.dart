@@ -15,8 +15,7 @@ class TransactionsScreen extends ConsumerStatefulWidget {
   const TransactionsScreen({super.key});
 
   @override
-  ConsumerState<TransactionsScreen> createState() =>
-      _TransactionsScreenState();
+  ConsumerState<TransactionsScreen> createState() => _TransactionsScreenState();
 }
 
 class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
@@ -44,8 +43,8 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                 decoration: InputDecoration(
                   hintText: 'Buscar en notas…',
                   border: InputBorder.none,
-                  hintStyle: AppTextStyles.bodyMedium.copyWith(
-                      color: colorScheme.onSurfaceVariant),
+                  hintStyle: AppTextStyles.bodyMedium
+                      .copyWith(color: colorScheme.onSurfaceVariant),
                 ),
                 onChanged: (v) {
                   ref.read(transactionsProvider.notifier).setFilter(
@@ -100,8 +99,8 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                   children: [
                     Text(
                       '${state.transactions.length} resultado(s)',
-                      style: AppTextStyles.caption.copyWith(
-                          color: colorScheme.onSurfaceVariant),
+                      style: AppTextStyles.caption
+                          .copyWith(color: colorScheme.onSurfaceVariant),
                     ),
                   ],
                 ),
@@ -111,6 +110,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
               child: state.transactions.isEmpty
                   ? EmptyState(
                       icon: Icons.receipt_long_outlined,
+                      illustration: EmptyIllustration.transactions,
                       title: state.filter.isActive
                           ? 'Sin resultados'
                           : 'Sin movimientos aún',
@@ -162,8 +162,8 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                               }
                             } catch (e) {
                               if (context.mounted) {
-                                context.showSnackBar(
-                                    'Error al eliminar: $e', isError: true);
+                                context.showSnackBar('Error al eliminar: $e',
+                                    isError: true);
                               }
                             }
                           },
@@ -188,8 +188,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
     );
   }
 
-  void _openForm(BuildContext context,
-      {app_models.Transaction? transaction}) {
+  void _openForm(BuildContext context, {app_models.Transaction? transaction}) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => TransactionFormScreen(transaction: transaction),

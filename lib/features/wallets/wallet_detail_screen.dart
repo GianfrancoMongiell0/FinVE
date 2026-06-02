@@ -21,7 +21,8 @@ import 'wallets_provider.dart';
 //  Providers
 // ─────────────────────────────────────────────
 final _walletTxProvider =
-    FutureProvider.family<List<app_models.Transaction>, int>((ref, walletId) async {
+    FutureProvider.family<List<app_models.Transaction>, int>(
+        (ref, walletId) async {
   return TransactionDao.instance.getFiltered(walletId: walletId);
 });
 
@@ -37,8 +38,8 @@ final _walletChartProvider =
   final Map<String, double> netByDay = {};
   for (final tx in rows) {
     final key = tx.date.isoDate;
-    netByDay[key] = (netByDay[key] ?? 0) +
-        (tx.isIncome ? tx.amount : -tx.amount);
+    netByDay[key] =
+        (netByDay[key] ?? 0) + (tx.isIncome ? tx.amount : -tx.amount);
   }
 
   double running = currentBalance;
@@ -54,8 +55,6 @@ final _walletChartProvider =
 
   return points.reversed.toList();
 });
-
-
 
 class _ChartPoint {
   const _ChartPoint({required this.date, required this.balance});
@@ -73,7 +72,8 @@ class WalletDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final txAsync = ref.watch(_walletTxProvider(wallet.id!));
-    final chartAsync = ref.watch(_walletChartProvider((wallet.id!, wallet.balance)));
+    final chartAsync =
+        ref.watch(_walletChartProvider((wallet.id!, wallet.balance)));
     final rates = ref.watch(currencyRatesProvider);
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -120,15 +120,13 @@ class WalletDetailScreen extends ConsumerWidget {
           // ── Transaction list ─────────────────
           Expanded(
             child: txAsync.when(
-              loading: () =>
-                  const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => Center(child: Text('Error: $e')),
               data: (txs) => txs.isEmpty
                   ? const EmptyState(
                       icon: Icons.receipt_long_outlined,
                       title: 'Sin movimientos',
-                      subtitle:
-                          'Esta billetera no tiene transacciones aún.',
+                      subtitle: 'Esta billetera no tiene transacciones aún.',
                     )
                   : ListView.separated(
                       padding: const EdgeInsets.only(bottom: 24),
@@ -148,8 +146,7 @@ class WalletDetailScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _confirmDelete(
-      BuildContext context, WidgetRef ref) async {
+  Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
     final confirmed = await ConfirmDialog.show(
       context,
       title: 'Eliminar billetera',
@@ -210,8 +207,7 @@ class _BalanceHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  Formatters.byCurrency(
-                      wallet.balance, wallet.currencyCode),
+                  Formatters.byCurrency(wallet.balance, wallet.currencyCode),
                   style: AppTextStyles.amountMedium
                       .copyWith(color: colorScheme.onSurface),
                 ),
@@ -219,8 +215,8 @@ class _BalanceHeader extends StatelessWidget {
                     wallet.currencyCode != CurrencyCodes.usd)
                   Text(
                     '≈ ${Formatters.usd(usdEquiv)}',
-                    style: AppTextStyles.bodySmall.copyWith(
-                        color: colorScheme.onSurfaceVariant),
+                    style: AppTextStyles.bodySmall
+                        .copyWith(color: colorScheme.onSurfaceVariant),
                   ),
               ],
             ),
@@ -283,9 +279,8 @@ class _MiniChart extends StatelessWidget {
     // Determine trend color
     final first = points.first.balance;
     final last = points.last.balance;
-    final trendColor = last >= first
-        ? const Color(0xFF1D9E75)
-        : colorScheme.error;
+    final trendColor =
+        last >= first ? const Color(0xFF1D9E75) : colorScheme.error;
 
     return Container(
       height: 110,
@@ -300,8 +295,8 @@ class _MiniChart extends StatelessWidget {
               children: [
                 Text(
                   'Últimos 30 días',
-                  style: AppTextStyles.caption.copyWith(
-                      color: colorScheme.onSurfaceVariant),
+                  style: AppTextStyles.caption
+                      .copyWith(color: colorScheme.onSurfaceVariant),
                 ),
                 const SizedBox(width: 8),
                 Icon(
@@ -316,8 +311,7 @@ class _MiniChart extends StatelessWidget {
                   range > 0
                       ? '${last >= first ? '+' : ''}${Formatters.byCurrency((last - first).abs(), currencyCode)}'
                       : 'Sin cambios',
-                  style: AppTextStyles.caption
-                      .copyWith(color: trendColor),
+                  style: AppTextStyles.caption.copyWith(color: trendColor),
                 ),
               ],
             ),
@@ -330,14 +324,14 @@ class _MiniChart extends StatelessWidget {
                 gridData: const FlGridData(show: false),
                 borderData: FlBorderData(show: false),
                 titlesData: const FlTitlesData(
-                  leftTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
-                  topTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
-                  bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
+                  leftTitles:
+                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles:
+                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles:
+                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  bottomTitles:
+                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 ),
                 lineBarsData: [
                   LineChartBarData(
@@ -364,14 +358,12 @@ class _MiniChart extends StatelessWidget {
                   touchTooltipData: LineTouchTooltipData(
                     getTooltipItems: (spots) => spots.map((s) {
                       final idx = s.x.toInt();
-                      final date = idx < points.length
-                          ? points[idx].date
-                          : null;
+                      final date =
+                          idx < points.length ? points[idx].date : null;
                       return LineTooltipItem(
                         '${date != null ? '${date.day}/${date.month}\n' : ''}'
                         '${Formatters.byCurrency(s.y, currencyCode)}',
-                        AppTextStyles.labelSmall
-                            .copyWith(color: Colors.white),
+                        AppTextStyles.labelSmall.copyWith(color: Colors.white),
                       );
                     }).toList(),
                   ),
@@ -402,10 +394,13 @@ class _TxRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final isIncome = tx.isIncome;
-    final amountColor =
-        isIncome ? const Color(0xFF1D9E75) : colorScheme.error;
+    final amountColor = isIncome ? const Color(0xFF1D9E75) : colorScheme.error;
     final sign = isIncome ? '+' : '−';
-    final usd = rates.toUsd(tx.amount, walletCurrency);
+    final usd = walletCurrency != CurrencyCodes.usd
+        ? (tx.rateSnapshot != null && tx.rateSnapshot! > 0
+            ? tx.amount / tx.rateSnapshot!
+            : rates.toUsd(tx.amount, walletCurrency))
+        : null;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -434,18 +429,17 @@ class _TxRow extends StatelessWidget {
                 const SizedBox(height: 2),
                 Row(
                   children: [
-                    PaymentMethodBadge(
-                        method: tx.paymentMethod, compact: true),
+                    PaymentMethodBadge(method: tx.paymentMethod, compact: true),
                     const SizedBox(width: 6),
                     Text(Formatters.transactionDate(tx.date),
-                        style: AppTextStyles.caption.copyWith(
-                            color: colorScheme.onSurfaceVariant)),
+                        style: AppTextStyles.caption
+                            .copyWith(color: colorScheme.onSurfaceVariant)),
                   ],
                 ),
                 if (tx.note != null && tx.note!.isNotEmpty)
                   Text(tx.note!,
-                      style: AppTextStyles.caption.copyWith(
-                          color: colorScheme.onSurfaceVariant),
+                      style: AppTextStyles.caption
+                          .copyWith(color: colorScheme.onSurfaceVariant),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis),
               ],
@@ -457,13 +451,15 @@ class _TxRow extends StatelessWidget {
             children: [
               Text(
                 '$sign${Formatters.byCurrency(tx.amount, walletCurrency)}',
-                style: AppTextStyles.amountSmall
-                    .copyWith(color: amountColor),
+                style: AppTextStyles.amountSmall.copyWith(color: amountColor),
               ),
               if (usd != null && walletCurrency != CurrencyCodes.usd)
-                Text(Formatters.usd(usd),
-                    style: AppTextStyles.caption.copyWith(
-                        color: colorScheme.onSurfaceVariant)),
+                Text(
+                    tx.rateSnapshot != null
+                        ? '≈ ${Formatters.usd(usd)} hist.'
+                        : '≈ ${Formatters.usd(usd)}',
+                    style: AppTextStyles.caption
+                        .copyWith(color: colorScheme.onSurfaceVariant)),
             ],
           ),
         ],

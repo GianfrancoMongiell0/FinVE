@@ -79,6 +79,7 @@ class BudgetScreen extends ConsumerWidget {
               child: state.budgets.isEmpty
                   ? EmptyState(
                       icon: Icons.pie_chart_outline_rounded,
+                      illustration: EmptyIllustration.budget,
                       title: 'Sin presupuestos',
                       subtitle:
                           'Crea límites de gasto por categoría para controlar tus finanzas.',

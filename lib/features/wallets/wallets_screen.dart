@@ -25,19 +25,18 @@ class WalletsScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.settings_outlined),
-            onPressed: () =>
-                Navigator.of(context).pushNamed('/settings'),
+            onPressed: () => Navigator.of(context).pushNamed('/settings'),
           ),
         ],
       ),
       body: stateAsync.when(
-        loading: () =>
-            const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
         data: (state) {
           if (state.wallets.isEmpty) {
             return EmptyState(
               icon: Icons.account_balance_wallet_outlined,
+              illustration: EmptyIllustration.wallets,
               title: 'Sin billeteras aún',
               subtitle:
                   'Crea tu primera billetera para comenzar a registrar tus finanzas.',
@@ -49,15 +48,16 @@ class WalletsScreen extends ConsumerWidget {
           return Column(
             children: [
               // ── Total header ─────────────────
-              _TotalHeader(totalUsd: state.totalUsd, visible: ref.watch(balanceVisibleProvider)),
+              _TotalHeader(
+                  totalUsd: state.totalUsd,
+                  visible: ref.watch(balanceVisibleProvider)),
 
               // ── Wallet list ──────────────────
               Expanded(
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 88),
                   itemCount: state.wallets.length,
-                  separatorBuilder: (_, __) =>
-                      const SizedBox(height: 10),
+                  separatorBuilder: (_, __) => const SizedBox(height: 10),
                   itemBuilder: (_, i) {
                     final w = state.wallets[i];
                     final usd = state.usdEquivalent(w);
@@ -67,14 +67,12 @@ class WalletsScreen extends ConsumerWidget {
                       visible: ref.watch(balanceVisibleProvider),
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (_) =>
-                              WalletDetailScreen(wallet: w),
+                          builder: (_) => WalletDetailScreen(wallet: w),
                         ),
                       ),
                       onEdit: () => Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (_) =>
-                              WalletFormScreen(wallet: w),
+                          builder: (_) => WalletFormScreen(wallet: w),
                         ),
                       ),
                       onDelete: () =>
@@ -101,8 +99,8 @@ class WalletsScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _confirmDelete(BuildContext context, WidgetRef ref,
-      int id, String name) async {
+  Future<void> _confirmDelete(
+      BuildContext context, WidgetRef ref, int id, String name) async {
     final confirmed = await ConfirmDialog.show(
       context,
       title: 'Eliminar billetera',
@@ -132,8 +130,7 @@ class _TotalHeader extends StatelessWidget {
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerLow,
         border: Border(
-          bottom: BorderSide(
-              color: colorScheme.outlineVariant, width: 0.5),
+          bottom: BorderSide(color: colorScheme.outlineVariant, width: 0.5),
         ),
       ),
       child: Column(
@@ -188,8 +185,7 @@ class _WalletCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final icon =
-        _iconMap[wallet.icon] ?? Icons.account_balance_wallet_outlined;
+    final icon = _iconMap[wallet.icon] ?? Icons.account_balance_wallet_outlined;
 
     return Card(
       child: InkWell(
@@ -207,8 +203,7 @@ class _WalletCard extends StatelessWidget {
                   color: colorScheme.primaryContainer,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon,
-                    size: 24, color: colorScheme.primary),
+                child: Icon(icon, size: 24, color: colorScheme.primary),
               ),
               const SizedBox(width: 14),
 
@@ -236,7 +231,8 @@ class _WalletCard extends StatelessWidget {
                 children: [
                   Text(
                     visible
-                        ? Formatters.byCurrency(wallet.balance, wallet.currencyCode)
+                        ? Formatters.byCurrency(
+                            wallet.balance, wallet.currencyCode)
                         : '••••••',
                     style: AppTextStyles.amountMedium
                         .copyWith(color: colorScheme.onSurface),
@@ -244,8 +240,8 @@ class _WalletCard extends StatelessWidget {
                   if (wallet.currencyCode != CurrencyCodes.usd)
                     Text(
                       visible ? Formatters.usd(usdEquivalent) : '••••',
-                      style: AppTextStyles.bodySmall.copyWith(
-                          color: colorScheme.onSurfaceVariant),
+                      style: AppTextStyles.bodySmall
+                          .copyWith(color: colorScheme.onSurfaceVariant),
                     ),
                 ],
               ),
@@ -270,8 +266,7 @@ class _WalletCard extends StatelessWidget {
                     value: 'delete',
                     child: Row(children: [
                       Icon(Icons.delete_outline,
-                          size: 18,
-                          color: colorScheme.error),
+                          size: 18, color: colorScheme.error),
                       const SizedBox(width: 10),
                       Text('Eliminar',
                           style: TextStyle(color: colorScheme.error)),

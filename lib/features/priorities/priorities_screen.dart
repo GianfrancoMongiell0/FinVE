@@ -38,6 +38,7 @@ class PrioritiesScreen extends ConsumerWidget {
           if (allEmpty) {
             return EmptyState(
               icon: Icons.flag_outlined,
+              illustration: EmptyIllustration.goals,
               title: 'Sin metas aún',
               subtitle:
                   'Define tus objetivos financieros y rastrea tu progreso.',
@@ -68,8 +69,7 @@ class PrioritiesScreen extends ConsumerWidget {
                           onToggleCompleted: () => ref
                               .read(prioritiesProvider.notifier)
                               .toggleCompleted(p),
-                          onDelete: () =>
-                              _confirmDelete(context, ref, p),
+                          onDelete: () => _confirmDelete(context, ref, p),
                         )),
                     const SizedBox(height: 8),
                   ],
@@ -87,8 +87,7 @@ class PrioritiesScreen extends ConsumerWidget {
                           onToggleCompleted: () => ref
                               .read(prioritiesProvider.notifier)
                               .toggleCompleted(p),
-                          onDelete: () =>
-                              _confirmDelete(context, ref, p),
+                          onDelete: () => _confirmDelete(context, ref, p),
                         )),
                     const SizedBox(height: 8),
                   ],
@@ -106,8 +105,7 @@ class PrioritiesScreen extends ConsumerWidget {
                           onToggleCompleted: () => ref
                               .read(prioritiesProvider.notifier)
                               .toggleCompleted(p),
-                          onDelete: () =>
-                              _confirmDelete(context, ref, p),
+                          onDelete: () => _confirmDelete(context, ref, p),
                         )),
                     const SizedBox(height: 8),
                   ],
@@ -122,8 +120,8 @@ class PrioritiesScreen extends ConsumerWidget {
                         const SizedBox(width: 8),
                         Text(
                           'Completadas (${state.completed.length})',
-                          style: AppTextStyles.labelLarge.copyWith(
-                              color: const Color(0xFF1D9E75)),
+                          style: AppTextStyles.labelLarge
+                              .copyWith(color: const Color(0xFF1D9E75)),
                         ),
                       ],
                     ),
@@ -134,8 +132,7 @@ class PrioritiesScreen extends ConsumerWidget {
                         onUndo: () => ref
                             .read(prioritiesProvider.notifier)
                             .toggleCompleted(p),
-                        onDelete: () =>
-                            _confirmDelete(context, ref, p),
+                        onDelete: () => _confirmDelete(context, ref, p),
                       ),
                     ),
                   ],
@@ -183,9 +180,8 @@ class PrioritiesScreen extends ConsumerWidget {
 
   void _showAffordSheet(
       BuildContext context, WidgetRef ref, PrioritiesState state) {
-    final results = ref
-        .read(prioritiesProvider.notifier)
-        .computeAffordability(state);
+    final results =
+        ref.read(prioritiesProvider.notifier).computeAffordability(state);
     AffordResultSheet.show(
       context,
       results: results,
@@ -221,8 +217,8 @@ class _BalanceSummary extends StatelessWidget {
       decoration: BoxDecoration(
         color: colorScheme.primaryContainer.withOpacity(0.5),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-            color: colorScheme.primary.withOpacity(0.2), width: 0.5),
+        border:
+            Border.all(color: colorScheme.primary.withOpacity(0.2), width: 0.5),
       ),
       child: Row(
         children: [
@@ -231,14 +227,14 @@ class _BalanceSummary extends StatelessWidget {
           const SizedBox(width: 10),
           Text(
             'Balance disponible',
-            style: AppTextStyles.labelLarge
-                .copyWith(color: colorScheme.onSurface),
+            style:
+                AppTextStyles.labelLarge.copyWith(color: colorScheme.onSurface),
           ),
           const Spacer(),
           Text(
             Formatters.usd(totalUsd),
-            style: AppTextStyles.amountMedium
-                .copyWith(color: colorScheme.primary),
+            style:
+                AppTextStyles.amountMedium.copyWith(color: colorScheme.primary),
           ),
         ],
       ),
@@ -260,8 +256,8 @@ class _GroupHeader extends StatelessWidget {
         const SizedBox(width: 8),
         Text(
           '${level.label} · $count',
-          style: AppTextStyles.labelLarge.copyWith(
-              color: Theme.of(context).colorScheme.onSurface),
+          style: AppTextStyles.labelLarge
+              .copyWith(color: Theme.of(context).colorScheme.onSurface),
         ),
       ],
     );
@@ -286,8 +282,8 @@ class _CompletedTile extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
-        leading: const Icon(Icons.check_circle_rounded,
-            color: Color(0xFF1D9E75)),
+        leading:
+            const Icon(Icons.check_circle_rounded, color: Color(0xFF1D9E75)),
         title: Text(
           priority.name,
           style: AppTextStyles.bodyMedium.copyWith(
@@ -296,8 +292,7 @@ class _CompletedTile extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          Formatters.byCurrency(
-              priority.targetAmount, priority.currencyCode),
+          Formatters.byCurrency(priority.targetAmount, priority.currencyCode),
           style: AppTextStyles.caption
               .copyWith(color: colorScheme.onSurfaceVariant),
         ),
@@ -318,11 +313,9 @@ class _CompletedTile extends StatelessWidget {
             PopupMenuItem(
               value: 'delete',
               child: Row(children: [
-                Icon(Icons.delete_outline,
-                    size: 18, color: colorScheme.error),
+                Icon(Icons.delete_outline, size: 18, color: colorScheme.error),
                 const SizedBox(width: 10),
-                Text('Eliminar',
-                    style: TextStyle(color: colorScheme.error)),
+                Text('Eliminar', style: TextStyle(color: colorScheme.error)),
               ]),
             ),
           ],

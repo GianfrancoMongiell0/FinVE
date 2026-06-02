@@ -22,12 +22,21 @@ class MonthlySummaryCard extends StatelessWidget {
                   style: AppTextStyles.headingSmall
                       .copyWith(color: colorScheme.onSurface)),
               const Spacer(),
-              Text(
-                summary.currentNet >= 0 ? 'Superávit' : 'Déficit',
-                style: AppTextStyles.labelMedium.copyWith(
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
                   color: summary.currentNet >= 0
-                      ? const Color(0xFF1D9E75)
-                      : colorScheme.error,
+                      ? colorScheme.tertiaryContainer
+                      : colorScheme.errorContainer,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  summary.currentNet >= 0 ? 'Superávit' : 'Déficit',
+                  style: AppTextStyles.labelMedium.copyWith(
+                    color: summary.currentNet >= 0
+                        ? colorScheme.onTertiaryContainer
+                        : colorScheme.onErrorContainer,
+                  ),
                 ),
               ),
             ],
@@ -35,26 +44,26 @@ class MonthlySummaryCard extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              // Income
               Expanded(
                 child: _SummaryTile(
                   label: 'Ingresos',
                   icon: Icons.arrow_downward_rounded,
-                  iconColor: const Color(0xFF1D9E75),
-                  bgColor: const Color(0xFFE8F5E9),
+                  iconColor: colorScheme.tertiary,
+                  bgColor: colorScheme.tertiaryContainer,
+                  fgColor: colorScheme.onTertiaryContainer,
                   amount: summary.currentIncome,
                   change: summary.incomeChange,
                   previousAmount: summary.previousIncome,
                 ),
               ),
               const SizedBox(width: 10),
-              // Expense
               Expanded(
                 child: _SummaryTile(
                   label: 'Gastos',
                   icon: Icons.arrow_upward_rounded,
                   iconColor: colorScheme.error,
-                  bgColor: colorScheme.errorContainer.withOpacity(0.3),
+                  bgColor: colorScheme.errorContainer,
+                  fgColor: colorScheme.onErrorContainer,
                   amount: summary.currentExpense,
                   change: summary.expenseChange,
                   previousAmount: summary.previousExpense,
@@ -75,6 +84,7 @@ class _SummaryTile extends StatelessWidget {
     required this.icon,
     required this.iconColor,
     required this.bgColor,
+    required this.fgColor,
     required this.amount,
     required this.change,
     required this.previousAmount,
@@ -85,6 +95,7 @@ class _SummaryTile extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
   final Color bgColor;
+  final Color fgColor;
   final double amount;
   final double change;
   final double previousAmount;
@@ -94,11 +105,9 @@ class _SummaryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    // For expenses: increase is bad (red), decrease is good (green)
-    // For income: increase is good (green), decrease is bad (red)
     final isPositiveChange = invertChange ? change <= 0 : change >= 0;
     final changeColor =
-        isPositiveChange ? const Color(0xFF1D9E75) : colorScheme.error;
+        isPositiveChange ? colorScheme.tertiary : colorScheme.error;
     final changeIcon = change > 0
         ? Icons.trending_up_rounded
         : change < 0
@@ -119,15 +128,13 @@ class _SummaryTile extends StatelessWidget {
               Icon(icon, size: 16, color: iconColor),
               const SizedBox(width: 4),
               Text(label,
-                  style: AppTextStyles.labelMedium
-                      .copyWith(color: colorScheme.onSurface)),
+                  style: AppTextStyles.labelMedium.copyWith(color: fgColor)),
             ],
           ),
           const SizedBox(height: 8),
           Text(
             Formatters.usd(amount),
-            style: AppTextStyles.amountMedium
-                .copyWith(color: colorScheme.onSurface),
+            style: AppTextStyles.amountMedium.copyWith(color: fgColor),
           ),
           const SizedBox(height: 4),
           if (previousAmount > 0) ...[
@@ -135,18 +142,20 @@ class _SummaryTile extends StatelessWidget {
               children: [
                 Icon(changeIcon, size: 12, color: changeColor),
                 const SizedBox(width: 3),
-                Text(
-                  '${change.abs().toStringAsFixed(0)}% vs mes anterior',
-                  style: AppTextStyles.caption
-                      .copyWith(color: changeColor),
+                Flexible(
+                  child: Text(
+                    '${change.abs().toStringAsFixed(0)}% vs mes anterior',
+                    style: AppTextStyles.caption.copyWith(color: changeColor),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),
           ] else ...[
             Text(
-              'Sin datos del mes anterior',
+              'Sin datos anteriores',
               style: AppTextStyles.caption
-                  .copyWith(color: colorScheme.onSurfaceVariant),
+                  .copyWith(color: fgColor.withOpacity(0.6)),
             ),
           ],
         ],

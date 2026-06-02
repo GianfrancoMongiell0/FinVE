@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/providers/logo_provider.dart';
 import '../../core/services/auth_service.dart';
 import '../../shared/theme/app_text_styles.dart';
+import '../../shared/widgets/finve_logo.dart';
 import 'widgets/pin_keypad.dart';
 import 'widgets/pin_dots.dart';
 
@@ -124,19 +126,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
           children: [
             const Spacer(),
 
-            // App icon + name
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(22),
-              ),
-              child: Icon(
-                Icons.account_balance_wallet_outlined,
-                size: 40,
-                color: colorScheme.primary,
-              ),
+            // Logo dinámico
+            Consumer(
+              builder: (ctx, ref, _) {
+                final logoId =
+                    ref.watch(logoProvider).valueOrNull ?? AppLogoId.v4;
+                return FinveLogo(logoId: logoId, size: 88);
+              },
             ),
             const SizedBox(height: 16),
             Text(

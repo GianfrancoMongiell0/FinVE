@@ -28,6 +28,7 @@ class CategorySettingsScreen extends ConsumerWidget {
           if (cats.isEmpty) {
             return EmptyState(
               icon: Icons.category_outlined,
+              illustration: EmptyIllustration.categories,
               title: 'Sin categorías',
               actionLabel: 'Nueva categoría',
               onAction: () => _showForm(context, ref, null),
@@ -73,7 +74,8 @@ class CategorySettingsScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _showForm(BuildContext context, WidgetRef ref, Category? cat) async {
+  Future<void> _showForm(
+      BuildContext context, WidgetRef ref, Category? cat) async {
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -88,10 +90,13 @@ class CategorySettingsScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _delete(BuildContext context, WidgetRef ref, Category cat) async {
+  Future<void> _delete(
+      BuildContext context, WidgetRef ref, Category cat) async {
     final inUse = await CategoryDao.instance.isInUse(cat.id!);
     if (inUse && context.mounted) {
-      context.showSnackBar('No puedes eliminar esta categoría porque está en uso', isError: true);
+      context.showSnackBar(
+          'No puedes eliminar esta categoría porque está en uso',
+          isError: true);
       return;
     }
     if (!context.mounted) return;
@@ -108,7 +113,8 @@ class CategorySettingsScreen extends ConsumerWidget {
 }
 
 class _CatTile extends StatelessWidget {
-  const _CatTile({required this.cat, required this.onEdit, required this.onDelete});
+  const _CatTile(
+      {required this.cat, required this.onEdit, required this.onDelete});
   final Category cat;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
@@ -120,18 +126,25 @@ class _CatTile extends StatelessWidget {
 
     return ListTile(
       leading: Container(
-        width: 40, height: 40,
+        width: 40,
+        height: 40,
         decoration: BoxDecoration(
           color: color.withOpacity(0.15),
           shape: BoxShape.circle,
           border: Border.all(color: color.withOpacity(0.4), width: 1.5),
         ),
-        child: Center(child: Text(cat.icon, style: const TextStyle(fontSize: 20))),
+        child:
+            Center(child: Text(cat.icon, style: const TextStyle(fontSize: 20))),
       ),
       title: Text(cat.name, style: AppTextStyles.bodyMedium),
       subtitle: Text(
-        cat.type == 'income' ? 'Ingreso' : cat.type == 'expense' ? 'Gasto' : 'Ambos',
-        style: AppTextStyles.caption.copyWith(color: colorScheme.onSurfaceVariant),
+        cat.type == 'income'
+            ? 'Ingreso'
+            : cat.type == 'expense'
+                ? 'Gasto'
+                : 'Ambos',
+        style:
+            AppTextStyles.caption.copyWith(color: colorScheme.onSurfaceVariant),
       ),
       trailing: PopupMenuButton<String>(
         onSelected: (v) {
@@ -139,14 +152,20 @@ class _CatTile extends StatelessWidget {
           if (v == 'delete') onDelete();
         },
         itemBuilder: (_) => [
-          const PopupMenuItem(value: 'edit', child: Row(children: [
-            Icon(Icons.edit_outlined, size: 18), SizedBox(width: 10), Text('Editar'),
-          ])),
-          PopupMenuItem(value: 'delete', child: Row(children: [
-            Icon(Icons.delete_outline, size: 18, color: colorScheme.error),
-            const SizedBox(width: 10),
-            Text('Eliminar', style: TextStyle(color: colorScheme.error)),
-          ])),
+          const PopupMenuItem(
+              value: 'edit',
+              child: Row(children: [
+                Icon(Icons.edit_outlined, size: 18),
+                SizedBox(width: 10),
+                Text('Editar'),
+              ])),
+          PopupMenuItem(
+              value: 'delete',
+              child: Row(children: [
+                Icon(Icons.delete_outline, size: 18, color: colorScheme.error),
+                const SizedBox(width: 10),
+                Text('Eliminar', style: TextStyle(color: colorScheme.error)),
+              ])),
         ],
       ),
     );
@@ -227,7 +246,8 @@ class _CategoryFormState extends State<_CategoryForm> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(16, 16, 16, MediaQuery.of(context).viewInsets.bottom + 16),
+      padding: EdgeInsets.fromLTRB(
+          16, 16, 16, MediaQuery.of(context).viewInsets.bottom + 16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -235,7 +255,8 @@ class _CategoryFormState extends State<_CategoryForm> {
           // Handle
           Center(
             child: Container(
-              width: 40, height: 4,
+              width: 40,
+              height: 4,
               decoration: BoxDecoration(
                 color: colorScheme.outlineVariant,
                 borderRadius: BorderRadius.circular(2),
@@ -252,7 +273,8 @@ class _CategoryFormState extends State<_CategoryForm> {
             children: [
               // Preview circle
               Container(
-                width: 48, height: 48,
+                width: 48,
+                height: 48,
                 decoration: BoxDecoration(
                   color: _selectedColor.withOpacity(0.15),
                   shape: BoxShape.circle,
@@ -288,8 +310,9 @@ class _CategoryFormState extends State<_CategoryForm> {
           const SizedBox(height: 16),
 
           // Color picker
-          Text('Color', style: AppTextStyles.labelLarge
-              .copyWith(color: colorScheme.onSurfaceVariant)),
+          Text('Color',
+              style: AppTextStyles.labelLarge
+                  .copyWith(color: colorScheme.onSurfaceVariant)),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
@@ -300,7 +323,8 @@ class _CategoryFormState extends State<_CategoryForm> {
                 onTap: () => setState(() => _selectedColor = color),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 150),
-                  width: 32, height: 32,
+                  width: 32,
+                  height: 32,
                   decoration: BoxDecoration(
                     color: color,
                     shape: BoxShape.circle,
@@ -308,11 +332,15 @@ class _CategoryFormState extends State<_CategoryForm> {
                         ? Border.all(color: colorScheme.onSurface, width: 2.5)
                         : Border.all(color: Colors.transparent, width: 2.5),
                     boxShadow: selected
-                        ? [BoxShadow(color: color.withOpacity(0.5), blurRadius: 6)]
+                        ? [
+                            BoxShadow(
+                                color: color.withOpacity(0.5), blurRadius: 6)
+                          ]
                         : null,
                   ),
                   child: selected
-                      ? const Icon(Icons.check_rounded, color: Colors.white, size: 16)
+                      ? const Icon(Icons.check_rounded,
+                          color: Colors.white, size: 16)
                       : null,
                 ),
               );

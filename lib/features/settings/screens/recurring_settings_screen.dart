@@ -13,8 +13,7 @@ import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../wallets/wallets_provider.dart';
 
-final _recurringProvider =
-    FutureProvider<List<RecurringExpense>>((ref) async {
+final _recurringProvider = FutureProvider<List<RecurringExpense>>((ref) async {
   return RecurringExpenseDao.instance.getAll();
 });
 
@@ -28,12 +27,12 @@ class RecurringSettingsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Gastos recurrentes')),
       body: listAsync.when(
-        loading: () =>
-            const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
         data: (items) => items.isEmpty
             ? EmptyState(
                 icon: Icons.event_repeat_rounded,
+                illustration: EmptyIllustration.recurring,
                 title: 'Sin gastos recurrentes',
                 subtitle:
                     'Programa gastos fijos como servicios, suscripciones, etc.',
@@ -43,13 +42,11 @@ class RecurringSettingsScreen extends ConsumerWidget {
             : ListView.separated(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 88),
                 itemCount: items.length,
-                separatorBuilder: (_, __) =>
-                    const SizedBox(height: 8),
+                separatorBuilder: (_, __) => const SizedBox(height: 8),
                 itemBuilder: (_, i) => _RecurringCard(
                   expense: items[i],
                   onEdit: () => _openForm(context, ref, items[i]),
-                  onDelete: () =>
-                      _confirmDelete(context, ref, items[i]),
+                  onDelete: () => _confirmDelete(context, ref, items[i]),
                 ),
               ),
       ),
@@ -61,10 +58,9 @@ class RecurringSettingsScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _openForm(BuildContext context, WidgetRef ref,
-      RecurringExpense? expense) async {
-    final wallets =
-        ref.read(walletsProvider).valueOrNull?.wallets ?? [];
+  Future<void> _openForm(
+      BuildContext context, WidgetRef ref, RecurringExpense? expense) async {
+    final wallets = ref.read(walletsProvider).valueOrNull?.wallets ?? [];
     if (wallets.isEmpty && context.mounted) {
       context.showSnackBar(
           'Crea una billetera antes de agregar gastos recurrentes',
@@ -83,8 +79,8 @@ class RecurringSettingsScreen extends ConsumerWidget {
     ref.invalidate(_recurringProvider);
   }
 
-  Future<void> _confirmDelete(BuildContext context, WidgetRef ref,
-      RecurringExpense expense) async {
+  Future<void> _confirmDelete(
+      BuildContext context, WidgetRef ref, RecurringExpense expense) async {
     final confirmed = await ConfirmDialog.show(
       context,
       title: 'Eliminar gasto recurrente',
@@ -151,8 +147,7 @@ class _RecurringCard extends StatelessWidget {
                   Icon(Icons.delete_outline,
                       size: 18, color: colorScheme.error),
                   const SizedBox(width: 10),
-                  Text('Eliminar',
-                      style: TextStyle(color: colorScheme.error)),
+                  Text('Eliminar', style: TextStyle(color: colorScheme.error)),
                 ])),
           ],
         ),
@@ -178,8 +173,7 @@ class RecurringFormScreen extends ConsumerStatefulWidget {
       _RecurringFormScreenState();
 }
 
-class _RecurringFormScreenState
-    extends ConsumerState<RecurringFormScreen> {
+class _RecurringFormScreenState extends ConsumerState<RecurringFormScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameCtrl;
   late TextEditingController _amountCtrl;
@@ -197,13 +191,12 @@ class _RecurringFormScreenState
     super.initState();
     final e = widget.expense;
     _nameCtrl = TextEditingController(text: e?.name ?? '');
-    _amountCtrl = TextEditingController(
-        text: e != null ? e.amount.toString() : '');
+    _amountCtrl =
+        TextEditingController(text: e != null ? e.amount.toString() : '');
     _currency = e?.currencyCode ?? CurrencyCodes.usd;
     _wallet = e != null
-        ? widget.wallets
-            .firstWhere((w) => w.id == e.walletId,
-                orElse: () => widget.wallets.first)
+        ? widget.wallets.firstWhere((w) => w.id == e.walletId,
+            orElse: () => widget.wallets.first)
         : widget.wallets.first;
     _categoryId = e?.categoryId;
     _paymentMethod = e?.paymentMethod ?? PaymentMethod.cash;
@@ -298,8 +291,8 @@ class _RecurringFormScreenState
                     decoration: const InputDecoration(
                         labelText: 'Monto',
                         prefixIcon: Icon(Icons.attach_money_rounded)),
-                    keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true),
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
                     validator: (v) {
                       if (v == null || v.isEmpty) return 'Obligatorio';
                       if (double.tryParse(v.replaceAll(',', '.')) == null) {
@@ -314,15 +307,13 @@ class _RecurringFormScreenState
                   flex: 2,
                   child: DropdownButtonFormField<String>(
                     value: _currency,
-                    decoration:
-                        const InputDecoration(labelText: 'Moneda'),
+                    decoration: const InputDecoration(labelText: 'Moneda'),
                     items: CurrencyCodes.all
                         .map((c) => DropdownMenuItem(
                             value: c,
                             child: Text('${CurrencyCodes.flag(c)} $c')))
                         .toList(),
-                    onChanged: (v) =>
-                        setState(() => _currency = v!),
+                    onChanged: (v) => setState(() => _currency = v!),
                   ),
                 ),
               ],
@@ -332,28 +323,24 @@ class _RecurringFormScreenState
               value: _wallet,
               decoration: const InputDecoration(
                   labelText: 'Billetera',
-                  prefixIcon: Icon(
-                      Icons.account_balance_wallet_outlined)),
+                  prefixIcon: Icon(Icons.account_balance_wallet_outlined)),
               items: widget.wallets
-                  .map((w) => DropdownMenuItem(
-                      value: w, child: Text(w.name)))
+                  .map((w) => DropdownMenuItem(value: w, child: Text(w.name)))
                   .toList(),
               onChanged: (w) => setState(() => _wallet = w),
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<int?>(
               value: _categoryId,
-              decoration: const InputDecoration(
-                  labelText: 'Categoría (opcional)'),
+              decoration:
+                  const InputDecoration(labelText: 'Categoría (opcional)'),
               items: [
                 const DropdownMenuItem(
                     value: null, child: Text('Sin categoría')),
                 ..._categories.map((c) => DropdownMenuItem(
-                    value: c.id,
-                    child: Text('${c.icon}  ${c.name}'))),
+                    value: c.id, child: Text('${c.icon}  ${c.name}'))),
               ],
-              onChanged: (v) =>
-                  setState(() => _categoryId = v),
+              onChanged: (v) => setState(() => _categoryId = v),
             ),
             const SizedBox(height: 12),
             // Day of month slider
@@ -368,8 +355,7 @@ class _RecurringFormScreenState
                     max: 31,
                     divisions: 30,
                     label: '$_dayOfMonth',
-                    onChanged: (v) =>
-                        setState(() => _dayOfMonth = v.round()),
+                    onChanged: (v) => setState(() => _dayOfMonth = v.round()),
                   ),
                 ),
               ],
@@ -382,8 +368,7 @@ class _RecurringFormScreenState
                 return ChoiceChip(
                   selected: sel,
                   label: Text('${p.emoji} ${p.label}'),
-                  onSelected: (_) =>
-                      setState(() => _paymentMethod = p),
+                  onSelected: (_) => setState(() => _paymentMethod = p),
                 );
               }).toList(),
             ),
@@ -393,8 +378,7 @@ class _RecurringFormScreenState
               subtitle: const Text(
                   'Registra la transacción automáticamente en la fecha indicada'),
               value: _autoRegister,
-              onChanged: (v) =>
-                  setState(() => _autoRegister = v),
+              onChanged: (v) => setState(() => _autoRegister = v),
             ),
             const SizedBox(height: 24),
             FilledButton(
@@ -404,9 +388,7 @@ class _RecurringFormScreenState
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14)),
               ),
-              child: Text(widget.expense != null
-                  ? 'Actualizar'
-                  : 'Guardar'),
+              child: Text(widget.expense != null ? 'Actualizar' : 'Guardar'),
             ),
           ],
         ),
