@@ -517,6 +517,132 @@ class AppTheme {
         ),
     };
   }
+
+  // ─────────────────────────────────────────────
+  //  Card gradients — 3 distinct identities per theme
+  //  [0] USD card  [1] VES card  [2] Wallets card
+  // ─────────────────────────────────────────────
+  static List<LinearGradient> cardGradients(
+      AppThemeId id, Brightness brightness) {
+    final isDark = brightness == Brightness.dark;
+    return switch (id) {
+      AppThemeId.oceanBlue => [
+          LinearGradient(
+            colors: isDark
+                ? [OceanBlueColors.primary800, OceanBlueColors.primary600]
+                : [OceanBlueColors.primary900, OceanBlueColors.primary600],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          LinearGradient(
+            colors: isDark
+                ? [OceanBlueColors.accent800, OceanBlueColors.accent600]
+                : [OceanBlueColors.accent900, OceanBlueColors.accent600],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          LinearGradient(
+            colors: isDark
+                ? [OceanBlueColors.primary800, OceanBlueColors.accent600]
+                : [OceanBlueColors.primary800, OceanBlueColors.accent400],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ],
+      AppThemeId.slateAmber => [
+          LinearGradient(
+            colors: isDark
+                ? [SlateAmberColors.primary900, SlateAmberColors.primary600]
+                : [SlateAmberColors.primary900, SlateAmberColors.primary600],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          LinearGradient(
+            colors: isDark
+                ? [SlateAmberColors.accent900, SlateAmberColors.accent600]
+                : [SlateAmberColors.accent900, SlateAmberColors.accent600],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          LinearGradient(
+            colors: isDark
+                ? [SlateAmberColors.primary800, SlateAmberColors.accent600]
+                : [SlateAmberColors.primary800, SlateAmberColors.accent400],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ],
+      AppThemeId.emeraldGold => [
+          LinearGradient(
+            colors: isDark
+                ? [EmeraldGoldColors.primary900, EmeraldGoldColors.primary600]
+                : [EmeraldGoldColors.primary900, EmeraldGoldColors.primary600],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          LinearGradient(
+            colors: isDark
+                ? [EmeraldGoldColors.accent900, EmeraldGoldColors.accent600]
+                : [EmeraldGoldColors.accent900, EmeraldGoldColors.accent600],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          LinearGradient(
+            colors: isDark
+                ? [EmeraldGoldColors.primary800, EmeraldGoldColors.accent600]
+                : [EmeraldGoldColors.primary800, EmeraldGoldColors.accent400],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ],
+      AppThemeId.roseNight => [
+          LinearGradient(
+            colors: isDark
+                ? [RoseNightColors.primary900, RoseNightColors.primary600]
+                : [RoseNightColors.primary900, RoseNightColors.primary600],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          LinearGradient(
+            colors: isDark
+                ? [RoseNightColors.accent900, RoseNightColors.accent600]
+                : [RoseNightColors.accent900, RoseNightColors.accent600],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          LinearGradient(
+            colors: isDark
+                ? [RoseNightColors.primary800, RoseNightColors.accent600]
+                : [RoseNightColors.primary800, RoseNightColors.accent400],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ],
+      AppThemeId.violetSunset => [
+          LinearGradient(
+            colors: isDark
+                ? [VioletSunsetColors.primary900, VioletSunsetColors.primary600]
+                : [VioletSunsetColors.primary900, VioletSunsetColors.primary600],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          LinearGradient(
+            colors: isDark
+                ? [VioletSunsetColors.accent900, VioletSunsetColors.accent600]
+                : [VioletSunsetColors.accent900, VioletSunsetColors.accent600],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          LinearGradient(
+            colors: isDark
+                ? [VioletSunsetColors.primary800, VioletSunsetColors.accent600]
+                : [VioletSunsetColors.primary800, VioletSunsetColors.accent400],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ],
+    };
+  }
 }
 
 // Internal data class — not exported

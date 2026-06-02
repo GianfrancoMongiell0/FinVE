@@ -89,8 +89,9 @@ class AuthService {
       final authenticated = await _localAuth.authenticate(
         localizedReason: 'Confirma tu identidad para acceder a FinVe',
         options: const AuthenticationOptions(
-          biometricOnly: true,
+          biometricOnly: false,
           stickyAuth: true,
+          useErrorDialogs: true,
         ),
       );
       return authenticated;

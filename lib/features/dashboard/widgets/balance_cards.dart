@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/models/currency_rates.dart';
 import '../../../core/providers/balance_visibility_provider.dart';
+import '../../../core/providers/theme_provider.dart';
 import '../../../core/utils/constants.dart';
 import '../../../core/utils/formatters.dart';
+import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_text_styles.dart';
+import '../../../shared/theme/app_theme.dart';
 import '../dashboard_provider.dart';
 
 class BalanceCards extends ConsumerStatefulWidget {
@@ -39,6 +42,10 @@ class _BalanceCardsState extends ConsumerState<BalanceCards> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final visible = ref.watch(balanceVisibleProvider);
+    final themeId =
+        ref.watch(themeProvider).valueOrNull ?? AppThemeId.oceanBlue;
+    final brightness = Theme.of(context).brightness;
+    final gradients = AppTheme.cardGradients(themeId, brightness);
 
     return Column(
       children: [
@@ -90,14 +97,21 @@ class _BalanceCardsState extends ConsumerState<BalanceCards> {
             controller: _controller,
             onPageChanged: (i) => setState(() => _currentPage = i),
             children: [
-              _UsdCard(totalUsd: widget.totalUsd, visible: visible),
+              _UsdCard(
+                  totalUsd: widget.totalUsd,
+                  visible: visible,
+                  gradient: gradients[0]),
               _VesCard(
                 totalVesBcv: widget.totalVesBcv,
                 bcvRate: widget.rates.bcvRate,
                 visible: visible,
+                gradient: gradients[1],
               ),
               _AssetBreakdownCard(
-                  summaries: widget.walletSummaries, visible: visible),
+                summaries: widget.walletSummaries,
+                visible: visible,
+                gradient: gradients[2],
+              ),
             ],
           ),
         ),
@@ -142,9 +156,13 @@ class _MaskedAmount extends StatelessWidget {
 
 // ── Card 1: Total in USD ──────────────────────
 class _UsdCard extends StatefulWidget {
-  const _UsdCard({required this.totalUsd, required this.visible});
+  const _UsdCard(
+      {required this.totalUsd,
+      required this.visible,
+      required this.gradient});
   final double totalUsd;
   final bool visible;
+  final LinearGradient gradient;
 
   @override
   State<_UsdCard> createState() => _UsdCardState();
@@ -187,13 +205,8 @@ class _UsdCardState extends State<_UsdCard>
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return _CardShell(
-      gradient: LinearGradient(
-        colors: [colorScheme.primary, colorScheme.primaryContainer],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
+      gradient: widget.gradient,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -231,20 +244,17 @@ class _VesCard extends StatelessWidget {
   const _VesCard(
       {required this.totalVesBcv,
       required this.bcvRate,
-      required this.visible});
+      required this.visible,
+      required this.gradient});
   final double totalVesBcv;
   final double bcvRate;
   final bool visible;
+  final LinearGradient gradient;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return _CardShell(
-      gradient: LinearGradient(
-        colors: [colorScheme.primary, colorScheme.primaryContainer],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
+      gradient: gradient,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -279,22 +289,18 @@ class _VesCard extends StatelessWidget {
 
 // ── Card 3: Per-asset breakdown ───────────────
 class _AssetBreakdownCard extends StatelessWidget {
-  const _AssetBreakdownCard({required this.summaries, required this.visible});
+  const _AssetBreakdownCard(
+      {required this.summaries,
+      required this.visible,
+      required this.gradient});
   final List<WalletSummary> summaries;
   final bool visible;
+  final LinearGradient gradient;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return _CardShell(
-      gradient: LinearGradient(
-        colors: [
-          const Color(0xFF26215C),
-          colorScheme.primary.withOpacity(0.9),
-        ],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
+      gradient: gradient,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
