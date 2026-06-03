@@ -31,11 +31,11 @@ class FinVeApp extends ConsumerWidget {
       darkTheme: darkTheme,
       home: const _AuthGate(),
       routes: {
-        '/main':         (_) => const MainShell(),
-        '/pin-setup':    (_) => const PinSetupScreen(),
-        '/pin-change':   (_) => const PinSetupScreen(isChange: true),
-        '/auth':         (_) => const AuthScreen(),
-        '/settings':     (_) => const SettingsScreen(),
+        '/main': (_) => const MainShell(),
+        '/pin-setup': (_) => const PinSetupScreen(),
+        '/pin-change': (_) => const PinSetupScreen(isChange: true),
+        '/auth': (_) => const AuthScreen(),
+        '/settings': (_) => const SettingsScreen(),
         '/settings/recurring': (_) => const RecurringSettingsScreen(),
         '/budget': (_) => const BudgetScreen(),
         '/calendar': (_) => const CalendarScreen(),
@@ -88,38 +88,14 @@ class _SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: const Color(0xFF1A1A1A),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Consumer(
-              builder: (ctx, ref, _) {
-                final logoId =
-                    ref.watch(logoProvider).valueOrNull ?? AppLogoId.v4;
-                return FinveLogo(logoId: logoId, size: 88);
-              },
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'FinVe',
-              style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                    color: colorScheme.primary,
-                    letterSpacing: 3,
-                  ),
-            ),
-            const SizedBox(height: 32),
-            SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                strokeWidth: 2.5,
-                color: colorScheme.primary,
-              ),
-            ),
-          ],
+        child: Consumer(
+          builder: (ctx, ref, _) {
+            final logoId = ref.watch(logoProvider).valueOrNull ?? AppLogoId.v4;
+            return FinveLogo(logoId: logoId, size: 120);
+          },
         ),
       ),
     );
