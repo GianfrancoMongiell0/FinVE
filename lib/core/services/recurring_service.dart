@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Gianfranco Mongiello. MIT License.
+// https://github.com/GianfrancoMongiell0/FinVE
+
 import 'package:flutter/foundation.dart';
 import '../database/daos/recurring_expense_dao.dart';
 import '../database/daos/transaction_dao.dart';

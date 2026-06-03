@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Gianfranco Mongiello. MIT License.
+// https://github.com/GianfrancoMongiell0/FinVE
+
 import 'package:flutter/material.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../shared/theme/app_text_styles.dart';

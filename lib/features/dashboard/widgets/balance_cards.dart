@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Gianfranco Mongiello. MIT License.
+// https://github.com/GianfrancoMongiell0/FinVE
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/models/currency_rates.dart';

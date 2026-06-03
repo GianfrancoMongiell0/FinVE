@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Gianfranco Mongiello. MIT License.
+// https://github.com/GianfrancoMongiell0/FinVE
+
 import '../utils/constants.dart';
 
 /// Aggregated snapshot of all supported exchange rates at a point in time.

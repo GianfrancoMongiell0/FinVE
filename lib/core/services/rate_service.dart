@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Gianfranco Mongiello. MIT License.
+// https://github.com/GianfrancoMongiell0/FinVE
+
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';

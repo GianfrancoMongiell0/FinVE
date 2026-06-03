@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Gianfranco Mongiello. MIT License.
+// https://github.com/GianfrancoMongiell0/FinVE
+
 import 'package:flutter/material.dart';
 import '../../core/database/database_helper.dart';
 import '../../core/utils/extensions.dart';

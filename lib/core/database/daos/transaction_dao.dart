@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Gianfranco Mongiello. MIT License.
+// https://github.com/GianfrancoMongiell0/FinVE
+
 import 'package:sqflite/sqflite.dart';
 import '../database_helper.dart';
 import '../../models/transaction.dart' as app_models;
