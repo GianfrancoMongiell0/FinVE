@@ -22,8 +22,7 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeAsync = ref.watch(themeProvider);
-    final currentTheme =
-        themeAsync.valueOrNull ?? AppThemeId.oceanBlue;
+    final currentTheme = themeAsync.valueOrNull ?? AppThemeId.oceanBlue;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -32,7 +31,6 @@ class SettingsScreen extends ConsumerWidget {
         children: [
           // ── Appearance ──────────────────────
           _SectionHeader('Apariencia'),
-
           _SettingsTile(
             icon: Icons.palette_outlined,
             iconBg: colorScheme.primaryContainer,
@@ -43,6 +41,8 @@ class SettingsScreen extends ConsumerWidget {
                 : 'Slate & Amber',
             onTap: () => _showThemePicker(context, ref, currentTheme),
           ),
+
+          const _LogoPickerTile(),
 
           // ── Security ────────────────────────
           _SectionHeader('Seguridad'),
@@ -55,8 +55,7 @@ class SettingsScreen extends ConsumerWidget {
             subtitle: 'Cambia tu PIN o activa la huella',
             trailing: const Icon(Icons.chevron_right),
             onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (_) => const SecuritySettingsScreen()),
+              MaterialPageRoute(builder: (_) => const SecuritySettingsScreen()),
             ),
           ),
 
@@ -71,8 +70,7 @@ class SettingsScreen extends ConsumerWidget {
             subtitle: 'Ver tasas actuales y establecer valores manuales',
             trailing: const Icon(Icons.chevron_right),
             onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (_) => const RateSettingsScreen()),
+              MaterialPageRoute(builder: (_) => const RateSettingsScreen()),
             ),
           ),
 
@@ -87,8 +85,7 @@ class SettingsScreen extends ConsumerWidget {
             subtitle: 'Agrega, edita o elimina categorías',
             trailing: const Icon(Icons.chevron_right),
             onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (_) => const CategorySettingsScreen()),
+              MaterialPageRoute(builder: (_) => const CategorySettingsScreen()),
             ),
           ),
 
@@ -97,8 +94,7 @@ class SettingsScreen extends ConsumerWidget {
             iconBg: const Color(0xFFEEEDFE),
             iconColor: const Color(0xFF534AB7),
             title: 'Gastos recurrentes',
-            subtitle:
-                'Programa gastos fijos con recordatorios automáticos',
+            subtitle: 'Programa gastos fijos con recordatorios automáticos',
             trailing: const Icon(Icons.chevron_right),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
@@ -159,7 +155,8 @@ class SettingsScreen extends ConsumerWidget {
             iconBg: colorScheme.errorContainer.withOpacity(0.5),
             iconColor: colorScheme.error,
             title: 'Borrar todos los datos',
-            subtitle: 'Elimina billeteras, transacciones, metas y categorías personalizadas',
+            subtitle:
+                'Elimina billeteras, transacciones, metas y categorías personalizadas',
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _confirmReset(context),
           ),
@@ -189,7 +186,8 @@ class SettingsScreen extends ConsumerWidget {
             onPressed: () => Navigator.of(context).pop(false),
             style: OutlinedButton.styleFrom(
               minimumSize: const Size(120, 44),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
             ),
             child: const Text('Cancelar'),
           ),
@@ -199,7 +197,8 @@ class SettingsScreen extends ConsumerWidget {
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.error,
               minimumSize: const Size(120, 44),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
             ),
             child: const Text('Borrar todo'),
           ),
@@ -216,8 +215,8 @@ class SettingsScreen extends ConsumerWidget {
     }
   }
 
-  void _showThemePicker(BuildContext context, WidgetRef ref,
-      AppThemeId current) {
+  void _showThemePicker(
+      BuildContext context, WidgetRef ref, AppThemeId current) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -297,18 +296,15 @@ class _ThemePicker extends StatelessWidget {
                         children: [
                           Text(theme.label,
                               style: AppTextStyles.bodyMedium
-                                  .copyWith(
-                                      color: colorScheme.onSurface)),
+                                  .copyWith(color: colorScheme.onSurface)),
                           Text(theme.description,
                               style: AppTextStyles.caption.copyWith(
-                                  color:
-                                      colorScheme.onSurfaceVariant)),
+                                  color: colorScheme.onSurfaceVariant)),
                         ],
                       ),
                     ),
                     if (selected)
-                      Icon(Icons.check_rounded,
-                          color: colorScheme.primary),
+                      Icon(Icons.check_rounded, color: colorScheme.primary),
                   ],
                 ),
               ),
@@ -332,8 +328,8 @@ class _SectionHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 4),
       child: Text(
         text,
-        style: AppTextStyles.labelLarge.copyWith(
-            color: Theme.of(context).colorScheme.primary),
+        style: AppTextStyles.labelLarge
+            .copyWith(color: Theme.of(context).colorScheme.primary),
       ),
     );
   }
@@ -372,14 +368,105 @@ class _SettingsTile extends StatelessWidget {
         child: Icon(icon, color: iconColor, size: 22),
       ),
       title: Text(title,
-          style: AppTextStyles.bodyMedium
-              .copyWith(color: colorScheme.onSurface)),
+          style:
+              AppTextStyles.bodyMedium.copyWith(color: colorScheme.onSurface)),
       subtitle: Text(subtitle,
           style: AppTextStyles.caption
               .copyWith(color: colorScheme.onSurfaceVariant)),
       trailing: trailing,
       onTap: onTap,
       enabled: onTap != null,
+    );
+  }
+} // ── Logo picker tile ─────────────────────────────────
+
+class _LogoPickerTile extends ConsumerWidget {
+  const _LogoPickerTile();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final logoAsync = ref.watch(logoProvider);
+    final currentLogo = logoAsync.valueOrNull ?? AppLogoId.v4;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return ListTile(
+      leading: Container(
+        width: 42,
+        height: 42,
+        decoration: BoxDecoration(
+          color: colorScheme.primaryContainer,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(Icons.app_shortcut_outlined,
+            color: colorScheme.primary, size: 22),
+      ),
+      title: Text('Ícono de la app',
+          style:
+              AppTextStyles.bodyMedium.copyWith(color: colorScheme.onSurface)),
+      subtitle: Text('Personaliza el ícono del launcher',
+          style: AppTextStyles.caption
+              .copyWith(color: colorScheme.onSurfaceVariant)),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: () => _showLogoPicker(context, ref, currentLogo),
+    );
+  }
+
+  void _showLogoPicker(BuildContext context, WidgetRef ref, AppLogoId current) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Ícono de la app',
+                style: AppTextStyles.headingSmall
+                    .copyWith(color: Theme.of(context).colorScheme.onSurface)),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: AppLogoId.values.map((logoId) {
+                final selected = current == logoId;
+                final colorScheme = Theme.of(context).colorScheme;
+                return GestureDetector(
+                  onTap: () {
+                    ref.read(logoProvider.notifier).setLogo(logoId);
+                    Navigator.of(context).pop();
+                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(3),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          border: selected
+                              ? Border.all(color: colorScheme.primary, width: 2)
+                              : Border.all(color: Colors.transparent, width: 2),
+                        ),
+                        child: FinveLogo(logoId: logoId, size: 64),
+                      ),
+                      const SizedBox(height: 6),
+                      if (selected)
+                        Icon(Icons.check_circle_rounded,
+                            size: 16, color: colorScheme.primary)
+                      else
+                        const SizedBox(height: 16),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 12),
+          ],
+        ),
+      ),
     );
   }
 }

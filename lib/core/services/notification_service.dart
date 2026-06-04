@@ -16,8 +16,7 @@ class NotificationPayload {
   final String type; // 'recurring' | 'priority' | 'daily'
   final int? entityId;
 
-  String toJson() =>
-      jsonEncode({'type': type, 'entity_id': entityId});
+  String toJson() => jsonEncode({'type': type, 'entity_id': entityId});
 
   factory NotificationPayload.fromJson(String raw) {
     final m = jsonDecode(raw) as Map<String, dynamic>;
@@ -41,7 +40,7 @@ class NotificationService {
   Future<void> init() async {
     if (_initialized) return;
 
-    const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher_v4');
     const initSettings = InitializationSettings(android: androidInit);
 
     await _plugin.initialize(
@@ -75,9 +74,8 @@ class NotificationService {
       importance: Importance.defaultImportance,
     );
 
-    final androidPlugin = _plugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+    final androidPlugin = _plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
     await androidPlugin?.createNotificationChannel(daily);
     await androidPlugin?.createNotificationChannel(recurring);
     await androidPlugin?.createNotificationChannel(priority);
@@ -101,7 +99,7 @@ class NotificationService {
           'Recordatorio diario',
           importance: Importance.defaultImportance,
           priority: Priority.defaultPriority,
-          icon: '@mipmap/ic_launcher',
+          icon: '@mipmap/ic_launcher_v4',
         ),
       ),
       payload: const NotificationPayload(type: 'daily').toJson(),
@@ -130,7 +128,7 @@ class NotificationService {
           NotificationChannels.priority,
           'Recordatorios de metas',
           importance: Importance.defaultImportance,
-          icon: '@mipmap/ic_launcher',
+          icon: '@mipmap/ic_launcher_v4',
         ),
       ),
       payload: NotificationPayload(
@@ -158,7 +156,7 @@ class NotificationService {
       'Gastos recurrentes',
       importance: Importance.high,
       priority: Priority.high,
-      icon: '@mipmap/ic_launcher',
+      icon: '@mipmap/ic_launcher_v4',
       // Action buttons for manual-register mode
       actions: autoRegister
           ? null
@@ -215,8 +213,7 @@ class NotificationService {
   static void _handleResponse(NotificationResponse response) {
     if (response.payload == null) return;
     try {
-      final payload =
-          NotificationPayload.fromJson(response.payload!);
+      final payload = NotificationPayload.fromJson(response.payload!);
       if (response.actionId == 'register_now' &&
           payload.type == 'recurring' &&
           payload.entityId != null) {
@@ -233,16 +230,14 @@ class NotificationService {
   //  Permission request (Android 13+)
   // ─────────────────────────────────────────────
   Future<bool> requestPermission() async {
-    final androidPlugin = _plugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+    final androidPlugin = _plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
     return await androidPlugin?.requestNotificationsPermission() ?? false;
   }
 
   Future<bool> areNotificationsEnabled() async {
-    final androidPlugin = _plugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+    final androidPlugin = _plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
     return await androidPlugin?.areNotificationsEnabled() ?? false;
   }
 }

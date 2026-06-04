@@ -7,7 +7,7 @@ class LauncherIconService {
   LauncherIconService._();
   static final instance = LauncherIconService._();
 
-  static const _channel = MethodChannel('com.finve.app/launcher_icon');
+  static const _channel = MethodChannel('com.finve.finve_new/launcher_icon');
 
   Future<bool> setIcon(String logoId) async {
     try {
@@ -17,7 +17,6 @@ class LauncherIconService {
       );
       return result ?? false;
     } on PlatformException catch (e) {
-      // Log but don't crash — some ROMs block this
       debugPrint('[LauncherIconService] setIcon failed: ${e.message}');
       return false;
     }

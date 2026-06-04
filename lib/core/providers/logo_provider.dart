@@ -8,7 +8,7 @@ import '../services/launcher_icon_service.dart';
 
 const _kLogoKey = 'selected_logo_id';
 
-enum AppLogoId { v4, v1, v6, v7, v8 }
+enum AppLogoId { v4, v1, }
 
 class LogoNotifier extends AsyncNotifier<AppLogoId> {
   static const _storage = FlutterSecureStorage();
@@ -60,20 +60,5 @@ const List<LogoOption> availableLogos = [
     id: AppLogoId.v1,
     label: 'Clásico claro',
     description: 'Fondo claro, rojo y azul',
-  ),
-  LogoOption(
-    id: AppLogoId.v6,
-    label: 'Navy suave',
-    description: 'Azul marino con rojo y dorado',
-  ),
-  LogoOption(
-    id: AppLogoId.v7,
-    label: 'Navy + wordmark',
-    description: 'Navy oscuro con nombre integrado',
-  ),
-  LogoOption(
-    id: AppLogoId.v8,
-    label: 'Híbrido cálido',
-    description: 'Fondo cálido con rojo y dorado',
   ),
 ];
